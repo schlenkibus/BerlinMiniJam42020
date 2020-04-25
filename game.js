@@ -20,6 +20,7 @@ function createMap() {
         pos: createVector(0, 0),
         orientation: direction.DOWN,
         moving: true,
+        moveCycle: false,
         currentKey: [],
         draw: () => {
 
@@ -36,12 +37,19 @@ function createMap() {
                 case RIGHT_ARROW:
                     player.move(direction.RIGHT);
                     break;
+                default:
+                    player.moving = false;
             }
 
             image(player.getSprite(), player.pos.x, player.pos.y);
         },
         getSprite: () => {
             var index = Number(player.orientation) * 2;
+
+            if(player.moving && player.moveCycle){
+                index++;
+            }
+
             return playerSprites[index];
         },
         onKeyPressed: (keyCode) => {
@@ -52,6 +60,8 @@ function createMap() {
             player.currentKey = null;
         },
         move: (d) => {
+            player.moving = true;
+
             if(d == player.orientation) {
                 switch(d) {
                     case direction.UP:
@@ -72,6 +82,10 @@ function createMap() {
             }
         }
     };
+
+    setInterval(() => {
+        player.moveCycle = !player.moveCycle;
+    }, 200);
 }
 
 function placeEnemies() {
