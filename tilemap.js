@@ -1,9 +1,6 @@
 
 let tilemap = {};
-let tileInfo;
-let tilemapImage;
 
-let tileinfo_path = "resources/tilemap.txt"
 let tilemap_path = "resources/tilemap.png"
 let tilemapfile_path = "resources/tiles.json"
 
@@ -11,16 +8,23 @@ let tileWidth = 16;
 let tileHeight = 16;
 let tileMargin = 1;
 
-let tileMapWidth = 27;
-let tileMapHeight = 20;
+let tileMapVerticalEntries = 20;
+let tileMapHorizontalEntries = 27;
 
 function loadTilemap() {
     tilemap = getFileContents(tilemapfile_path)
-    tileInfo = getFileContents(tileinfo_path);
 
     tilemap = new Array(50);
-    for (var i = 0; i < tilemap.length; i++) {
+    for (var i = 0; i < 50; i++) {
         tilemap[i] = new Array(50);
+        for (var j = 0; j < 50; j++) {
+            tilemap[i][j] = {
+                tileType: i + j,
+                x: j,
+                y: i,
+                walkable: true
+            };
+        }
     }
 }
 
@@ -41,17 +45,17 @@ function getFileContents(filename)
 }
 
 function getType(x, y) {
-    return tilemap[y][x];
+    return tilemap[y][x].tileType;
 }
 
 function getXOffset(tileType) {
-    var totalWidth = tileMapWidth * (tileWidth + tileMargin);
-    return totalWidth % tileType;
+    var col = tileType % tileMapHorizontalEntries;
+    return col * (tileHeight + tileMargin);
 }
 
 function getYOffset(tileType) {
-    var totalHeight = tileMapHeight * (tileHeight + tileMargin);
-    return totalHeight % tileType;
+    var row = Math.floor(tileType / tileMapHorizontalEntries);
+    return row * (tileHeight + tileMargin);
 }
 
 function drawTile(x, y) {
@@ -66,5 +70,53 @@ function drawTiles() {
         for(var x = 0; x < 50; x++) {
             drawTile(x, y);
         }
+    }
+}
+
+function changeTile(pX, pY) {
+    if(pX > 800) {
+        updateTileEditor(pX, pY);
+        return;
+    }
+
+    var x = Number(pX / tileWidth).toFixed(0) - 1;
+    var y = Number(pY / tileHeight).toFixed(0) - 1;
+
+    for(var dy = Math.max(y - brushSize, 0); dy < Math.min(y + brushSize, 50); dy++) {
+        for(var dx = Math.max(x - brushSize, 0); dx < Math.min(x + brushSize, 50); dx++) {
+            tilemap[dy][dx].tileType = currentPaintTile;
+        }
+    }
+}
+
+let currentPaintTile = 0;
+let brushSize = 1;
+
+function drawTileEditor() {
+    image(tilemapImage, 800, 0);
+    var tileX = getXOffset(currentPaintTile);
+    var tileY = getYOffset(currentPaintTile);
+    stroke(255, 0, 0);
+    noFill();
+    rect(800 + tileX, tileY, tileWidth, tileHeight, 10);
+}
+
+function updateTileEditor(pX, pY) {
+    var tileFocus = true;
+
+    if(pY > 400)
+        tileFocus = false;
+
+    if(pX > 800 + 150) 
+    {
+        if(tileFocus)
+            currentPaintTile++;
+        else
+            brushSize++;
+    } else {
+        if(tileFocus)            
+            currentPaintTile--;
+        else
+            brushSize--;    
     }
 }
