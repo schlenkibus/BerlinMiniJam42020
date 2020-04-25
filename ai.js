@@ -10,13 +10,52 @@ class Agent {
         switch(type) {
             case aiType.avoid:
                 this.calculateVelocity = () => {
-    
+
+                    var velocitys = [];
+                    agents.forEach(agent => {
+                        if(agent != this) {
+                            var dist = getDistance(this, agent);
+                            if(dist <= 90) {
+                                var ret = createVector();
+                                var pp = getPlayerPositon();
+                                ret.x =  this.pos.x - pp.x;
+                                ret.x *= (0.02 + (random()) * 0.01);
+                                ret.y =  this.pos.y - pp.y;
+                                ret.y *= (0.02 + (random()) * 0.01);
+                                velocitys.push(ret);
+                            }
+                        }
+                    });
+
+                    var dist = getPlayerDistance(this); 
+                    if(dist <= 90) {
+                        var ret = createVector();
+                        var pp = getPlayerPositon();
+                        ret.x =  this.pos.x - pp.x;
+                        ret.x *= (0.02 + (random()) * 0.01);
+                        ret.y =  this.pos.y - pp.y;
+                        ret.y *= (0.02 + (random()) * 0.01);
+                        velocitys.push(ret);
+                    }
+
+                    var ret = createVector(0, 0);
+                    velocitys.forEach(vel => {
+                        ret.x += vel.x;
+                        ret.y += vel.y;
+                    });
+
+                    if(velocitys.length != 0) {
+                        ret.x /= velocitys.length;
+                        ret.y /= velocitys.length;    
+                    }
+                    
+                    return ret;
                 };
                 break;
             case aiType.follow:
                 this.calculateVelocity = () => {
                     var dist = getPlayerDistance(this); 
-                    if(dist >= 40) {
+                    if(dist >= 40 && dist <= 300) {
                         var ret = createVector();
                         var pp = getPlayerPositon();
                         ret.x =  pp.x - this.pos.x;
@@ -30,8 +69,15 @@ class Agent {
                 };
                 break;
             case aiType.roam:
-                this.calculateVelocity = () => {
-    
+                this.roamTick = 0;
+                this.currentVel = createVector();
+                setInterval(() => {
+                    this.currentVel.x = (random() - 0.5) * 2;
+                    this.currentVel.y = (random() - 0.5) * 2;
+                }, 500);
+
+                this.calculateVelocity = () => {    
+                    return this.currentVel;
                 };
                 break;
         }
@@ -55,6 +101,12 @@ class Agent {
 
 function getPlayerDistance(agent) {
     var pp = getPlayerPositon();
+    var p = agent.pos;
+    return Math.abs(pp.x - p.x) + Math.abs(pp.y - p.y);
+}
+
+function getDistance(agent, agent2) {
+    var pp = agent2.pos;
     var p = agent.pos;
     return Math.abs(pp.x - p.x) + Math.abs(pp.y - p.y);
 }

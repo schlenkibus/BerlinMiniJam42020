@@ -12,9 +12,15 @@ function setup() {
         loadImage("resources/enemy/right_stand.png")
     ];
 
-    createAgent(100, 200, aiType.follow);
-    createAgent(300, 200, aiType.follow);
-    createAgent(400, 200, aiType.follow);
+
+    createAgent(400, 500, aiType.follow);
+    createAgent(100, 200, aiType.avoid);
+    createAgent(300, 200, aiType.avoid);
+    createAgent(400, 200, aiType.avoid);
+
+    setInterval(() => {
+        createAgent(400, 400, aiType.roam);
+    }, 2000);
 }
 
 function draw() {
