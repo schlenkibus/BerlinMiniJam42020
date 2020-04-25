@@ -1,6 +1,12 @@
 function setup() {
     var cnv = createCanvas(windowWidth, windowHeight);
     cnv.style('display', 'block');
+
+    loadTilemap();
+
+    loadImage('resources/tilemap.png', img => {
+        image(img, 0, 0);
+      });
   }
   
   function draw() {
