@@ -21,6 +21,7 @@ function createMap() {
         pos: createVector(0, 0),
         orientation: direction.DOWN,
         moving: true,
+        moveCycle: false,
         currentKey: [],
         currentMoveAnim: false,
         animationDelta: 0,
@@ -39,22 +40,17 @@ function createMap() {
                 case RIGHT_ARROW:
                     player.move(direction.RIGHT);
                     break;
+                default:
+                    player.moving = false;
             }
 
             image(player.getSprite(), player.pos.x, player.pos.y);
         },
         getSprite: () => {
             var index = Number(player.orientation) * 2;
-            index += player.currentMoveAnim ? 1 : 0;
-            if(player.moving) {
-                if(player.animationDelta % 5 == 1) {
-                    player.currentMoveAnim = !player.currentMoveAnim;
-                }
-
-                player.animationDelta++;
+            if(player.moving && player.moveCycle){
+                index++;
             }
-            else
-                player.currentMoveAnim = false;
             return playerSprites[index];
         },
         onKeyPressed: (keyCode) => {
@@ -67,6 +63,8 @@ function createMap() {
             }
         },
         move: (d) => {
+            player.moving = true;
+
             if(d == player.orientation) {
                 var speed = 2;
 
@@ -90,6 +88,10 @@ function createMap() {
             }
         }
     };
+
+    setInterval(() => {
+        player.moveCycle = !player.moveCycle;
+    }, 200);
 }
 
 function placeEnemies() {
