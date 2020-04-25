@@ -124,6 +124,23 @@ function drawTileEditor() {
 
 }
 
+function getXOffset(tileType) {
+    var col = tileType % tileMapHorizontalEntries;
+    return col * (tileHeight + tileMargin);
+}
+
+function getYOffset(tileType) {
+    var row = Math.floor(tileType / tileMapHorizontalEntries);
+    return row * (tileHeight + tileMargin);
+}
+
+function selectPaintTile(pX, pY) {
+    var selectedInRow = Math.floor((pX - 800) / 16);
+    var selectedColumn = Math.floor(pY / 16);
+    
+    currentPaintTile = Number(selectedColumn * tileMapHorizontalEntries + selectedInRow).toFixed(0);
+}
+
 function updateTileEditor(pX, pY) {
     var tileFocus = true;
 
@@ -132,13 +149,15 @@ function updateTileEditor(pX, pY) {
 
     if(pX > 800 + 150) 
     {
-        if(tileFocus)
-            currentPaintTile++;
+        if(tileFocus) {
+            selectPaintTile(pX, pY);
+        }
         else
             brushSize++;
     } else {
-        if(tileFocus)            
-            currentPaintTile--;
+        if(tileFocus) {
+            selectPaintTile(pX, pY);
+        }
         else
             brushSize--;    
     }
