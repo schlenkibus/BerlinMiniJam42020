@@ -19,7 +19,7 @@ function loadTilemap() {
         tilemap[i] = new Array(50);
         for (var j = 0; j < 50; j++) {
             tilemap[i][j] = {
-                tileType: i + j,
+                tileType: 28,
                 x: j,
                 y: i,
                 walkable: true

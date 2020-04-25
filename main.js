@@ -3,14 +3,26 @@ function setup() {
     cnv.style('display', 'block');
     loadTilemap();
     tilemapImage = loadImage(tilemap_path);
+    createMap();
 }
 
 function draw() {
+
+
     background(220);
     drawTiles();
     drawTileEditor();
+    player.draw();
 }
 
 function mousePressed() {
     changeTile(mouseX, mouseY);
+}
+
+function keyPressed() {
+    player.onKeyPressed(keyCode);
+}
+
+function keyReleased(){
+    player.onKeyRelease(keyCode);
 }
