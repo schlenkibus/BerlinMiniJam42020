@@ -82,11 +82,16 @@ function changeTile(pX, pY) {
     var x = Number(pX / tileWidth).toFixed(0) - 1;
     var y = Number(pY / tileHeight).toFixed(0) - 1;
 
-    for(var dy = Math.max(y - brushSize, 0); dy < Math.min(y + brushSize, 50); dy++) {
-        for(var dx = Math.max(x - brushSize, 0); dx < Math.min(x + brushSize, 50); dx++) {
-            tilemap[dy][dx].tileType = currentPaintTile;
+    if(brushSize == 0) {
+        tilemap[y][x].tileType = currentPaintTile;
+    } else {
+        for(var dy = Math.max(y - brushSize, 0); dy < Math.min(y + brushSize, 50); dy++) {
+            for(var dx = Math.max(x - brushSize, 0); dx < Math.min(x + brushSize, 50); dx++) {
+                tilemap[dy][dx].tileType = currentPaintTile;
+            }
         }
     }
+
 }
 
 let currentPaintTile = 0;
@@ -99,6 +104,24 @@ function drawTileEditor() {
     stroke(255, 0, 0);
     noFill();
     rect(800 + tileX, tileY, tileWidth, tileHeight, 10);
+
+    var x = Number(mouseX / tileWidth).toFixed(0) - 1;
+    var y = Number(mouseY / tileHeight).toFixed(0) - 1;
+
+    if(brushSize == 0) {
+        stroke(255, 0, 0);
+        noFill();
+        rect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+    } else { 
+        for(var dy = Math.max(y - brushSize, 0); dy < Math.min(y + brushSize, 50); dy++) {
+            for(var dx = Math.max(x - brushSize, 0); dx < Math.min(x + brushSize, 50); dx++) {
+                stroke(255, 0, 0);
+                noFill();
+                rect(dx * tileWidth, dy * tileHeight, tileWidth, tileHeight);
+            }
+        }
+    }
+
 }
 
 function updateTileEditor(pX, pY) {
